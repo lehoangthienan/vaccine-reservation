@@ -1,0 +1,43 @@
+{
+  "name": "reservation-api",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "author": "anle",
+  "license": "ISC",
+  "description": "",
+  "scripts": {
+    "build": "babel src -s -D -d dist",
+    "start": "node dist/app.js",
+    "dev": "nodemon --watch src src/app.js --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:worker": "node src/workers/consumers.js --exec babel-node"
+
+  },
+  "dependencies": {
+    "amqp": "^0.2.7",
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.1",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.17.1",
+    "joi": "^13.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
+    "mongoose": "^5.13.7",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "^1.9.0",
+    "redis": "^2.8.0",
+    "underscore": "^1.13.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "eslint": "^5.4.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^2.0.12"
+  }
+}

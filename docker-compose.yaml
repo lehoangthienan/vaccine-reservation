@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+  db:
+    image: mongo
+    ports:
+        - 27017:27017
+    restart: always
+    volumes:
+        - /Users/anle/User/github/reservation-system-vaccination/data:/data
+    container_name: mongo-db
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - /Users/anle/User/github/reservation-system-vaccination/data/rabbitmq/lib:/var/lib/rabbitmq
+        - /Users/anle/User/github/reservation-system-vaccination/data/rabbitmq/log:/var/log/rabbitmq
+        - /Users/anle/User/github/reservation-system-vaccination/data/rabbitmq/etc:/etc/rabbitmq/
+    environment:
+        RABBITMQ_DEFAULT_USER: anle
+        RABBITMQ_DEFAULT_PASS: anle
+    networks:
+        - rabbitmq_go_net
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
