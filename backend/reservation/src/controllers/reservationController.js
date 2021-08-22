@@ -72,6 +72,26 @@ export async function getReservation(req, res) {
   }
 }
 
+export async function getPublicReservation(req, res) {
+  try {
+    const { phone } = req.params
+
+    const customer = await getCustomerInfoByPhone(phone)
+
+    if (!customer) throw new ServerError('You have not registered for the covid 19 vaccine', 400)
+
+    const reservation = await Reservation.find({ customerID: customer._id })
+    .populate('branch', 'title address')
+    .populate('centre', 'title address')
+    .select({ "isSendSMS": 0, "_id": 0, "createdAt": 0, "updatedAt": 0, "nurseID": 0, "customerID": 0 })
+
+    return res.status(200).json({ message: 'Success', reservation })
+  } catch (err) {
+    logger.error(err)
+    res.status(err.code || 500).json({ message: err.message })
+  }
+}
+
 export async function updateReservation(req, res) {
   try {
     const {

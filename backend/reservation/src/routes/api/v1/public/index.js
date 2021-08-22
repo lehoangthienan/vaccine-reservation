@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createVaccineRegister,
+  getPublicReservation,
 } from '../../../../controllers/reservationController'
 import {
   mwCreateReservation
@@ -8,5 +9,6 @@ import {
 
 const routers = Router()
 routers.post('/reservations', mwCreateReservation, createVaccineRegister)
+routers.get('/reservations/:phone', getPublicReservation)
 
 export default routers
