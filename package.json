@@ -1,0 +1,16 @@
+{
+  "name": "anle",
+  "version": "1.0.0",
+  "description": "anle",
+  "author": "anle",
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently \"yarn dev:user-profiler\" \"yarn dev:reservation\" \"yarn dev:consumer\"",
+    "dev:user-profiler": "cd backend/user-profiler && yarn dev",
+    "dev:reservation": "cd backend/reservation && yarn dev",
+    "dev:consumer": "cd backend/reservation && yarn start:worker"
+  },
+  "devDependencies": {
+    "concurrently": "6.2.0"
+  }
+}

@@ -10,7 +10,7 @@
     "start": "node dist/app.js",
     "dev": "nodemon --watch src src/app.js --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:worker": "node src/workers/consumers.js --exec babel-node"
+    "start:worker": "nodemon src/workers/consumers.js --exec babel-node"
 
   },
   "dependencies": {
