@@ -19,6 +19,13 @@ vaccine-reservation
 make setup
 make dev
 ```
+
+### Register FE
+- Simple FE, access to:
+```
+http://localhost:3002
+```
+
 ### ROLE
 - User role master admin (all permission) manage admin of centre, add centre and create user admin
 - User role admin, add many branch belong to centre, add nurse into branch, add capacity for each branch

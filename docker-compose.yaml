@@ -6,7 +6,7 @@ services:
         - 27017:27017
     restart: always
     volumes:
-        - /Users/anle/User/github/reservation-system-vaccination/data:/data
+        - ./data:/data
     container_name: mongo-db
 
   rabbitmq:
@@ -16,15 +16,15 @@ services:
         - 5672:5672
         - 15672:15672
     volumes:
-        - /Users/anle/User/github/reservation-system-vaccination/data/rabbitmq/lib:/var/lib/rabbitmq
-        - /Users/anle/User/github/reservation-system-vaccination/data/rabbitmq/log:/var/log/rabbitmq
-        - /Users/anle/User/github/reservation-system-vaccination/data/rabbitmq/etc:/etc/rabbitmq/
+        - ./data/rabbitmq/lib:/var/lib/rabbitmq
+        - ./data/rabbitmq/log:/var/log/rabbitmq
+        - ./data/rabbitmq/etc:/etc/rabbitmq/
     environment:
         RABBITMQ_DEFAULT_USER: anle
         RABBITMQ_DEFAULT_PASS: anle
     networks:
-        - rabbitmq_go_net
+        - rabbitmq_net
 
 networks:
-  rabbitmq_go_net:
+  rabbitmq_net:
     driver: bridge
