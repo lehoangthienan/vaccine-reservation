@@ -1,0 +1,66 @@
+title Vaccine reservation
+
+bottomparticipants
+
+strict insert campign
+Admin->User profiler:Create master admin
+alt validate data
+User profiler--xAdmin: error 400
+else
+User profiler->User profiler DB: Create user
+User profiler DB-->User profiler: Success
+User profiler-->Admin: 200 success
+end
+Admin->Reservation: Create centre
+alt validate data
+Reservation--xAdmin:error 400
+else
+Reservation->User profiler:Create user (admin centre)
+User profiler->User profiler DB: Create user
+User profiler-->Reservation: 200 success
+Reservation->Reservation DB: Create centre
+Reservation DB-->Reservation: Success
+Reservation-->Admin: 200 success
+end
+Admin->Reservation: Create branch
+alt validate data
+Reservation--xAdmin: error 400
+else
+Reservation->Reservation DB: Create branch
+Reservation DB-->Reservation: Success
+Reservation-->Admin: 200 success
+end
+Admin->User profiler: Add nurse to branch
+alt validate data
+User profiler--xAdmin: error 400
+else
+User profiler->User profiler DB: Create
+User profiler DB-->User profiler: Success
+User profiler-->Admin: 200 success
+end
+par Register and auto assign to branch and nurse
+Register->Reservation: Register vaccine reservation
+alt validate data, check duplicate data
+Reservation--xRegister: error 400
+else 
+Reservation-->Register: 200 success
+Reservation->RabbitMQ: Published msg
+end
+Reservation Consumer->RabbitMQ: Get register
+alt validate data
+Reservation Consumer->RabbitMQ: Push msg to dead queue
+else
+Reservation Consumer->User profiler: Get nurses
+User profiler-->Reservation Consumer: Nurses
+Reservation Consumer->Reservation DB: Get branch
+Reservation DB-->Reservation Consumer: Branches
+Reservation Consumer->Reservation Consumer: Auto assing register for nurse of branch (round robin)
+Reservation Consumer->Reservation DB: Create reservation
+alt db
+Reservation Consumer->RabbitMQ: Push msg to dead queue
+else 
+Reservation Consumer->Notification(Not created): Push notification, sms, socket for nurse, user 
+end
+end
+end
+
