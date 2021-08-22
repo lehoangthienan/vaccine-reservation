@@ -5,10 +5,11 @@
   "author": "anle",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"yarn dev:user-profiler\" \"yarn dev:reservation\" \"yarn dev:consumer\"",
+    "dev": "concurrently \"yarn dev:user-profiler\" \"yarn dev:reservation\" \"yarn dev:consumer\" \"yarn dev:register\"",
     "dev:user-profiler": "cd backend/user-profiler && yarn dev",
     "dev:reservation": "cd backend/reservation && yarn dev",
-    "dev:consumer": "cd backend/reservation && yarn start:worker"
+    "dev:consumer": "cd backend/reservation && yarn start:worker",
+    "dev:register": "cd frontend/register && yarn dev"
   },
   "devDependencies": {
     "concurrently": "6.2.0"

@@ -9,6 +9,6 @@ import {
 
 const routers = Router()
 routers.post('/reservations', mwCreateReservation, createVaccineRegister)
-routers.get('/reservations/:phone', getPublicReservation)
+routers.get('/reservations/:phone/phone', getPublicReservation)
 
 export default routers
