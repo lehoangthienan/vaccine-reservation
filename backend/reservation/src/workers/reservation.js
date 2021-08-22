@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 
 import AMQP from './amqp'
 import configs from '../configs'
@@ -8,7 +8,7 @@ import { createCustomer, getNurseNIn } from '../services/user_profiler'
 import Branch from '../models/branch'
 import Reservation from '../models/reservation'
 
-const MAX_DAYS_EXTEND = 999
+const MAX_DAYS_EXTEND = 9999
 
 mongoose.connect(configs.MONGO_URL)
 const db = mongoose.connection
@@ -25,11 +25,22 @@ AMQP.get_connection(configs.RABBIT_CONFIG).then((connection) => {
       console.log('data', data)
 
       const customer = await createCustomer(data);
+
+      const reservation = await Reservation.findOne({ customerID: new Types.ObjectId(customer._id) })
+      if (reservation) {
+        logger.error('Error: this customer registered');
+        console.log('Error: this customer registered')
+        ack.reject(false);
+        return
+      }
+
       let nurseAssign = null
       let branchAssign = null
       let serveDay = new Date()
 
+      let session = null;
       for (let i = 0; i < MAX_DAYS_EXTEND; i ++) {
+        const sessionTemp = await db.startSession();
         const startDate = new Date();
         startDate.setDate(startDate.getDate() + i);
         startDate.setUTCHours(0,0,0,0);
@@ -38,7 +49,7 @@ AMQP.get_connection(configs.RABBIT_CONFIG).then((connection) => {
         endDate.setDate(endDate.getDate() + i);
         endDate.setUTCHours(23,59,59,999);
 
-        const branches = await findBranches(startDate, endDate)
+        const branches = await findBranches(startDate, endDate, sessionTemp)
 
         let isFindAssign = false
 
@@ -53,8 +64,10 @@ AMQP.get_connection(configs.RABBIT_CONFIG).then((connection) => {
         }
   
         if (!isFindAssign) {
+          sessionTemp.endSession()
           continue
         } else {
+          session = sessionTemp
           break
         }
       }
@@ -69,6 +82,7 @@ AMQP.get_connection(configs.RABBIT_CONFIG).then((connection) => {
 
       const newReservation = new Reservation(reservationData)
       await newReservation.save()
+      if (session) session.endSession()
 
       // send notification or sms or websocket to nurse for is coming reservation
       // send notification or sms for user for get success reservation
@@ -83,7 +97,7 @@ AMQP.get_connection(configs.RABBIT_CONFIG).then((connection) => {
   });
 });
 
-const findBranches = async (startDate, endDate) => {
+const findBranches = async (startDate, endDate, session) => {
   const objQueryMatch = {
     $match: {
       disabled: false,
@@ -96,6 +110,7 @@ const findBranches = async (startDate, endDate) => {
         $size: '$reservations',
       },
       capacity: '$capacity',
+      centre: '$centre',
     },
   }
   const objQueryLookup = {
@@ -133,7 +148,7 @@ const findBranches = async (startDate, endDate) => {
     // {
     //   $limit: 1,
     // },
-  ])
+  ]).session(session)
   return branches
 }
 

@@ -18,6 +18,12 @@ import {
   createBranch,
   updateBranch,
 } from '../../../../controllers/branchController'
+import {
+  getReservations,
+  getReservation,
+  updateReservation,
+  deleteReservation,
+} from '../../../../controllers/reservationController'
 
 const routers = Router()
 
@@ -32,6 +38,11 @@ routers.get('/branches', authenticateAdmin, getBranches)
 routers.get('/branches/:_id', authenticateNurse, getBranch)
 routers.post('/branches', authenticateAdmin, createBranch)
 routers.put('/branches/:_id', authenticateAdmin, updateBranch)
+
+routers.get('/reservations', authenticateNurse, getReservations)
+routers.get('/reservations/:_id', authenticateNurse, getReservation)
+routers.put('/reservations/:_id', authenticateNurse, updateReservation)
+routers.delete('/reservations/:_id', authenticateAdmin, deleteReservation)
 
 routers.use((err, req, res, next) => {
   if (err.name !== 'HttpError' || !err.errorCode) return next(err)
