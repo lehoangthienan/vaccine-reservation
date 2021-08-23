@@ -63,3 +63,7 @@ Reservation Consumer->Notification(Not created): Push notification, sms, socket 
 end
 end
 end
+Admin->Reservation: Get reservations
+Reservation-->Admin: Reservations
+Admin->Reservation: Verified reservation
+Reservation-->Admin: 200 Success
