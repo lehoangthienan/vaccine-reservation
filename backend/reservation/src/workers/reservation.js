@@ -94,13 +94,10 @@ const processReservation = async (data, ack) => {
     return newReservation.save()
   });
   const branchTemp = await findBranch(branchAssign._id, startDateTemp, endDateTemp)
-  console.log('branchTemp', branchTemp)
   let isAbortTransaction = false
   if (branchTemp.count <= branchTemp.capacity) {
-    console.log('end session')
     session.endSession()
   } else {
-    console.log('abort session')
     isAbortTransaction = true
     session.abortTransaction()
     await processReservation(data, ack)
