@@ -88,13 +88,20 @@ const processReservation = async (data, ack) => {
     serveDay,
   }
 
+  let isAbortTransaction = false
   const session = await db.startSession();
   const newReservation = new Reservation(reservationData)
   await session.withTransaction(() => {
     return newReservation.save()
+    // run on mongo RS
+    // const branchTemp = await findBranch(branchAssign._id, startDateTemp, endDateTemp, session)
+    // if (branchTemp.count <= branchTemp.capacity) {
+    //   // ok
+    // } else {
+    //   isAbortTransaction = true
+    // }
   });
-  const branchTemp = await findBranch(branchAssign._id, startDateTemp, endDateTemp)
-  let isAbortTransaction = false
+  const branchTemp = await findBranch(branchAssign._id, startDateTemp, endDateTemp, session)
   if (branchTemp.count <= branchTemp.capacity) {
     session.endSession()
   } else {
@@ -102,7 +109,7 @@ const processReservation = async (data, ack) => {
     session.abortTransaction()
     await processReservation(data, ack)
   }
-  
+
   if (!isAbortTransaction) {
     // send notification or sms or websocket to nurse for is coming reservation
     // send notification or sms for user for get success reservation
@@ -165,7 +172,7 @@ const findBranches = async (startDate, endDate) => {
   return branches
 }
 
-const findBranch = async (_id, startDate, endDate) => {
+const findBranch = async (_id, startDate, endDate, session) => {
   const objQueryMatch = {
     $match: {
       disabled: false,
@@ -215,6 +222,7 @@ const findBranch = async (_id, startDate, endDate) => {
       },
     },
   ])
+  // .session(session)
 
   return branches[0] || {}
 }
